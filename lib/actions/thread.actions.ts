@@ -1,3 +1,5 @@
+"use server";
+
 import { revalidatePath } from "next/cache";
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
@@ -15,17 +17,54 @@ export async function createThread({
   communityId,
   path,
 }: Params) {
+  try {
+    connectToDB();
+    const createdThread = await Thread.create({
+      text,
+      author,
+      community: null,
+    });
+
+    //Update user
+    await User.findByIdAndUpdate(author, {
+      $push: { threads: createdThread._id },
+    });
+
+    revalidatePath(path);
+  } catch (error: any) {
+    throw new Error(`Error creating thread: ${error.message}`);
+  }
+}
+
+export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   connectToDB();
-  const createdThread = await Thread.create({
-    text,
-    author,
-    community: null,
+
+  const skipAmount = (pageNumber - 1) * pageSize;
+
+  const posts = await Thread.find({
+    parentId: { $in: [null, undefined] },
+  })
+    .sort({ createdAt: "desc" })
+    .skip(skipAmount)
+    .limit(pageSize)
+    .populate({ path: "author", model: User })
+    .populate({
+      path: "children",
+      populate: {
+        path: "author",
+        model: User,
+        select: "_id name parentId image",
+      },
+    });
+
+  const totalPostCount = await Thread.countDocuments({
+    parentId: { $in: [null, undefined] },
   });
 
-  //Update user
-  await User.findByIdAndUpdate(author, {
-    $push: { threads: createdThread._id },
-  });
+  // console.log(postsQuery);
+  // const posts = await postsQuery.exce()
 
-  revalidatePath(path);
+  const isNext = totalPostCount > skipAmount + posts.length;
+
+  return { posts, isNext, totalPostCount };
 }
