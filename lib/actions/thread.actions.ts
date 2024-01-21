@@ -55,7 +55,8 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
         model: User,
         select: "_id name parentId image",
       },
-    });
+    })
+    .exec();
 
   const totalPostCount = await Thread.countDocuments({
     parentId: { $in: [null, undefined] },
@@ -67,4 +68,41 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   const isNext = totalPostCount > skipAmount + posts.length;
 
   return { posts, isNext, totalPostCount };
+}
+
+export async function fetchThreadById(id: string) {
+  try {
+    connectToDB();
+
+    //TODO: Polulate Community
+    const thread = Thread.findById(id)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "children",
+        populate: [
+          {
+            path: "author",
+            model: User,
+            select: "_id id name image",
+          },
+          {
+            path: "children",
+            model: Thread,
+            populate: {
+              path: "author",
+              model: User,
+              select: "_id id name image",
+            },
+          },
+        ],
+      })
+      .exec();
+    return thread;
+  } catch (error: any) {
+    throw new Error(`Error fetching thread: ${error.message}`);
+  }
 }
