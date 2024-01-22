@@ -62,8 +62,7 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
     parentId: { $in: [null, undefined] },
   });
 
-  // console.log(postsQuery);
-  // const posts = await postsQuery.exce()
+  // const posts = aswait postsQuery.exce()
 
   const isNext = totalPostCount > skipAmount + posts.length;
 

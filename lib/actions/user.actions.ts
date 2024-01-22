@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import Thread from "../models/thread.model";
-import { SortOrder } from "mongoose";
+import { FilterQuery, SortOrder } from "mongoose";
 
 interface Params {
   userId: string;
@@ -100,8 +100,33 @@ export async function fetchUsers({
 
     const regex = new RegExp(searchString, "i");
 
-    const query = {
+    //Not including the user who's logged in
+    const query: FilterQuery<typeof User> = {
       id: { $ne: userId },
     };
-  } catch (error) {}
+
+    if (searchString.trim() !== "") {
+      query.$or = [
+        { username: { $regex: regex } },
+        { name: { $regex: regex } },
+      ];
+    }
+
+    const sortOptions = { createdAt: sortBy };
+
+    const userQuery = User.find(query)
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const totalUsersCount = await User.countDocuments(query);
+
+    const users = await userQuery.exec();
+
+    const isNext = totalUsersCount > skipAmount + users?.length;
+
+    return { users, isNext };
+  } catch (error: any) {
+    throw new Error(`Failed to fetch users: ${error.message}`);
+  }
 }
