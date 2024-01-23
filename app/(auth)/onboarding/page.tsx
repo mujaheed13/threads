@@ -1,11 +1,12 @@
 import AccountProfile from "@/components/forms/AccountProfile";
 import { currentUser } from "@clerk/nextjs";
 
+
 async function Page() {
   const user = await currentUser();
   if (!user) return null; // to avoid typescript warnings
 
-  const userInfo = {};
+  const userInfo: any = {};
 
   const userData = {
     id: user?.id,
