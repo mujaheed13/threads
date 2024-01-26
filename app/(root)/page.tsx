@@ -3,9 +3,11 @@ import { fetchPosts } from "@/lib/actions/thread.actions";
 import { currentUser } from "@clerk/nextjs";
 
 export default async function Home() {
-  const res = await fetchPosts(1, 30);
+  const res: any = await fetchPosts(1, 30);
 
   const user = await currentUser();
+
+  console.log(res[0]?.community);
 
   return (
     <>
