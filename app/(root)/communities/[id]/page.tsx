@@ -12,22 +12,23 @@ async function Page({ params }: { params: { id: string } }) {
 
   if (!user) return null;
 
-  const communityDetails = fetchCommunityDetails(params?.id);
+  const communityDetails : any= fetchCommunityDetails(params?.id);
 
   return (
     <section>
       <ProfileHeader
-        accountId={userInfo.id}
+        accountId={communityDetails.id}
         authUserId={user.id}
-        name={userInfo.name}
-        username={userInfo.username}
-        imgurl={userInfo.image}
-        bio={userInfo.bio}
+        name={communityDetails.name}
+        username={communityDetails.username}
+        imgurl={communityDetails.image}
+        bio={communityDetails.bio}
+        type="Community"
       />
       <div className="mt-9">
         <Tabs defaultValue="threads" className="w-full">
           <TabsList className="tab">
-            {profileTabs.map((tab) => {
+            {communityTabs.map((tab) => {
               return (
                 <TabsTrigger key={tab.label} value={tab.value} className="tab">
                   <Image
@@ -40,7 +41,7 @@ async function Page({ params }: { params: { id: string } }) {
                   <p className="max-sm:hidden">{tab.label}</p>
                   {tab.label === "Threads" && (
                     <p className="ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2">
-                      {userInfo?.threads?.length}
+                      {communityDetails?.threads?.length}
                     </p>
                   )}
                 </TabsTrigger>

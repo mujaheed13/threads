@@ -16,7 +16,9 @@ async function Page({ params }: { params: { id: string } }) {
 
   const userInfo = await fetchUser(params.id);
 
-//   if (!userInfo?.onboarding) redirect("/onboarding");
+  const currUser = await fetchUser(user?.id);
+
+  if (!currUser?.onboarded) redirect("/onboarding");
 
   const res = await fetchUsers({
     userId: user?.id,
@@ -24,7 +26,6 @@ async function Page({ params }: { params: { id: string } }) {
     pageNumber: 1,
     pageSize: 25,
   });
-
 
   return (
     <section>
@@ -35,18 +36,18 @@ async function Page({ params }: { params: { id: string } }) {
           <p className="no-result">No users</p>
         ) : (
           <div className="">
-            {
-                res.users.map((person)=>{
-                    return <UserCard 
-                    key={person?.id}
-                    id={person?.id}
-                    name={person?.name}
-                    username={person?.username}
-                    imgUrl={person?.image}
-                    personType='User'
-                    />
-                })
-            }
+            {res.users.map((person) => {
+              return (
+                <UserCard
+                  key={person?.id}
+                  id={person?.id}
+                  name={person?.name}
+                  username={person?.username}
+                  imgUrl={person?.image}
+                  personType="User"
+                />
+              );
+            })}
           </div>
         )}
       </div>

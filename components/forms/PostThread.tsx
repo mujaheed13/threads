@@ -30,7 +30,6 @@ function PostThread({ userId }: Props) {
 
   const { organization } = useOrganization();
 
-  // console.log(organization?.id);
 
   const form = useForm<z.infer<typeof ThreadValidation>>({
     resolver: zodResolver(ThreadValidation),
