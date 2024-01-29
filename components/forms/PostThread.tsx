@@ -30,7 +30,6 @@ function PostThread({ userId }: Props) {
 
   const { organization } = useOrganization();
 
-
   const form = useForm<z.infer<typeof ThreadValidation>>({
     resolver: zodResolver(ThreadValidation),
     defaultValues: {
@@ -41,6 +40,13 @@ function PostThread({ userId }: Props) {
 
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     await createThread({
+      text: values.thread,
+      author: userId,
+      communityId: organization ? organization.id : null,
+      path: pathname,
+    });
+
+    console.log("TEST", {
       text: values.thread,
       author: userId,
       communityId: organization ? organization.id : null,
