@@ -59,27 +59,27 @@ async function Page({ params }: { params: { id: string } }) {
             />
           </TabsContent>
 
-          <TabsContent value="members" className="w-full text-light-1">
-            <section className="mt-9 flex flex-col gap-10">
-              {communityDetails?.map((member: any) => {
+          <TabsContent value='members' className='mt-9 w-full text-light-1'>
+            <section className='mt-9 flex flex-col gap-10'>
+              {communityDetails.members.map((member: any) => (
                 <UserCard
-                  key={member?.id}
-                  id={member?.id}
-                  name={member?.name}
-                  username={member?.username}
-                  imgUrl={member?.image}
-                  personType="User"
-                />;
-              })}
+                  key={member.id}
+                  id={member.id}
+                  name={member.name}
+                  username={member.username}
+                  imgUrl={member.image}
+                  personType='User'
+                />
+              ))}
             </section>
           </TabsContent>
 
           <TabsContent value="requests" className="w-full text-light-1">
-            <ThreadsTab
+            {/* <ThreadsTab
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType="Community"
-            />
+            /> */}
           </TabsContent>
         </Tabs>
       </div>

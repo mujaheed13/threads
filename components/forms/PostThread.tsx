@@ -46,13 +46,6 @@ function PostThread({ userId }: Props) {
       path: pathname,
     });
 
-    console.log("TEST", {
-      text: values.thread,
-      author: userId,
-      communityId: organization ? organization.id : null,
-      path: pathname,
-    });
-
     router.push("/");
   };
 
